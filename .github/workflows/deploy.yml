@@ -1,4 +1,4 @@
-name: Deploy via SSH (Tailscale)
+name: Deploy via runner local
 
 on:
   push:
@@ -6,15 +6,13 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-    - name: Deploy no servidor via SSH
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
+      - name: Acessar repositório
+        uses: actions/checkout@v3
+
+      - name: Rodar script docker-update.sh
+        run: |
           cd /var/www/testeApiDocker
           ./docker-update.sh
