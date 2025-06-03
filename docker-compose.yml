@@ -1,0 +1,14 @@
+﻿version: "3.8"
+services:
+  testeapi:
+    build:
+      context: .            # agora o contexto é a raiz da Solution (onde está o Dockerfile)
+      dockerfile: Dockerfile  # explicita que o Dockerfile está exatamente aqui, na raiz
+    image: jonas/testeapi:latest
+    container_name: testeapi_container
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    # Se você tiver um banco de dados neste compose, adicione a connection string aqui.
