@@ -4,7 +4,7 @@
             <v-col cols="12" md="8">
                 <v-card elevation="2">
                     <v-card-title class="headline">
-                        Deploy <#
+                        Previsão tempo com deploy automatico
                     </v-card-title>
                     <v-card-text>
                         <v-btn color="primary" @click="loadForecasts">
