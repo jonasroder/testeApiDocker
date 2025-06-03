@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<!-- Aqui definimos onde está o front (ClientApp) e qual a pasta de saída (dist) -->
+		<SpaRoot>..\ClientApp\</SpaRoot>
+		<SpaDist>dist\</SpaDist>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
+
+	<!--
+    Esse Target executa ANTES do Publish (BeforeTargets="Publish"):
+    1) Entra em ClientApp, faz npm install se necessário e roda npm run build
+    2) Copia tudo de ClientApp\dist\ para wwwroot\ do seu projeto API
+  -->
+	<Target Name="BuildClientApp" BeforeTargets="Publish">
+		<!-- 1. Roda “npm install” somente se node_modules ainda não existir -->
+		<Exec
+		  WorkingDirectory="$(SpaRoot)"
+		  Command="npm install"
+		  Condition="Exists('$(SpaRoot)package.json') AND !Exists('$(SpaRoot)node_modules')"
+    />
+
+		<!-- 2. Roda “npm run build” -->
+		<Exec
+		  WorkingDirectory="$(SpaRoot)"
+		  Command="npm run build"
+		  Condition="Exists('$(SpaRoot)package.json')"
+    />
+
+		<!-- 3. Mapeia todos os arquivos gerados em ClientApp\dist\**\* -->
+		<ItemGroup>
+			<ClientDistFiles Include="$(SpaRoot)$(SpaDist)**\*" />
+		</ItemGroup>
+
+		<!-- 4. Garante que wwwroot existe e copia todos os arquivos de dist para lá -->
+		<MakeDir Directories="$(ProjectDir)wwwroot" Condition="!Exists('$(ProjectDir)wwwroot')" />
+		<Copy
+		  SourceFiles="@(ClientDistFiles)"
+		  DestinationFolder="$(ProjectDir)wwwroot\%(RecursiveDir)"
+    />
+	</Target>
+</Project>
